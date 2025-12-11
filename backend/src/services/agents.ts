@@ -100,17 +100,13 @@ type DetectIntentParams = {
 
 export const detectIntentAndRespond = async (
   params: DetectIntentParams,
-  onGoalDetected: (goalText: string) => Promise<{ goal: any; goals: any[] }>,
+  onGoalDetected: (goalText: string) => Promise<any>,
 ) => {
   const { history, message, goals, summary } = params;
   const goalKeywords = ['sparen', 'ziel', 'bis', 'budget', 'CHF', 'Euro'];
   if (goalKeywords.some((word) => message?.toLowerCase().includes(word))) {
     const createdGoal = await onGoalDetected(message);
-    return {
-      reply: 'Ich habe dein Sparziel angelegt und passe dein Plan an.',
-      goal: createdGoal.goal,
-      goals: createdGoal.goals,
-    };
+    return { reply: 'Ich habe dein Sparziel angelegt und passe dein Plan an.', createdGoal };
   }
 
   const context = `Budget: ${summary.usedBudget} / ${summary.monthlyBudget}. Ziele: ${goals
