@@ -11,7 +11,7 @@ export default factories.createCoreController('api::chat.chat', ({ strapi }) => 
 
     const { history = [], message } = ctx.request.body || {};
     const summary = await buildBudgetSummary(strapi, user.id);
-    const goalsRaw = await strapi.entityService.findMany('api::savings-goal.savings-goal', {
+    let goals = await strapi.entityService.findMany('api::savings-goal.savings-goal', {
       filters: { user: user.id },
       sort: { targetDate: 'asc' },
     });
@@ -29,7 +29,13 @@ export default factories.createCoreController('api::chat.chat', ({ strapi }) => 
       return { goal, goals: updatedGoals };
     });
 
-    const goalsToReturn = (result as any).goals ?? goals;
-    ctx.body = { ...result, goals: goalsToReturn, summary };
+    if (result.createdGoal) {
+      goals = await strapi.entityService.findMany('api::savings-goal.savings-goal', {
+        filters: { user: user.id },
+        sort: { targetDate: 'asc' },
+      });
+    }
+
+    ctx.body = { ...result, goals, summary };
   },
 }));
