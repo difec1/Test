@@ -1,0 +1,62 @@
+{
+  "collectionName": "transactions",
+  "info": {
+    "singularName": "transaction",
+    "pluralName": "transactions",
+    "displayName": "Transaction"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "date": {
+      "type": "datetime",
+      "required": true
+    },
+    "merchant": {
+      "type": "string",
+      "required": true
+    },
+    "amount": {
+      "type": "decimal",
+      "required": true
+    },
+    "rawText": {
+      "type": "text"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "Shopping",
+        "Food Delivery",
+        "Transport",
+        "Unterhaltung",
+        "Lebensmittel",
+        "Other"
+      ],
+      "default": "Other"
+    },
+    "isImpulse": {
+      "type": "boolean",
+      "default": false
+    },
+    "decisionLabel": {
+      "type": "enumeration",
+      "enum": ["useful", "unnecessary"],
+      "default": "useful"
+    },
+    "decisionExplanation": {
+      "type": "text"
+    },
+    "source": {
+      "type": "enumeration",
+      "enum": ["user", "kaggle"],
+      "default": "user"
+    }
+  }
+}
