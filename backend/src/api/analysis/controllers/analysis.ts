@@ -10,10 +10,11 @@ export default factories.createCoreController('api::analysis.analysis', ({ strap
 
     const summary = await buildBudgetSummary(strapi, user.id);
 
-    const goals = await strapi.entityService.findMany('api::savings-goal.savings-goal', {
+    const goalsRaw = await strapi.entityService.findMany('api::savings-goal.savings-goal', {
       filters: { user: user.id },
       sort: { targetDate: 'asc' },
     });
+    const goals = Array.isArray(goalsRaw) ? goalsRaw : goalsRaw ? [goalsRaw] : [];
 
     ctx.body = { summary, goals };
   },
