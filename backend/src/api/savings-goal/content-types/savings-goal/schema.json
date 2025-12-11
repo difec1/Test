@@ -1,0 +1,36 @@
+{
+  "collectionName": "savings_goals",
+  "info": {
+    "singularName": "savings-goal",
+    "pluralName": "savings-goals",
+    "displayName": "Savings Goal"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "targetAmount": {
+      "type": "decimal",
+      "required": true
+    },
+    "targetDate": {
+      "type": "date"
+    },
+    "currentSavedAmount": {
+      "type": "decimal",
+      "default": 0
+    },
+    "rules": {
+      "type": "json"
+    }
+  }
+}
