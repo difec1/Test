@@ -17,7 +17,8 @@ Dieses Repository enthält ein Strapi-Backend und eine Vue-3-Frontend-App, die d
 
 ### Starten
 > **Hinweis zur Node-Version:** Strapi 4 erwartet Node.js 18.x oder 20.x. Bitte verwende eine dieser Versionen (z. B. via nvm),
-> da neuere Versionen wie 22/24 beim Installieren/Builden zu Fehlern führen.
+> da neuere Versionen wie 22/24 beim Installieren/Builden zu Fehlern führen. Im Backend liegt eine `.nvmrc` mit der Referenzversion
+> `20`.
 ```bash
 cd backend
 npm install

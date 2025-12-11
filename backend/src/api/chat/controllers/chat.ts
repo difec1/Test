@@ -1,5 +1,5 @@
 import { factories } from '@strapi/strapi';
-import { detectIntentAndRespond } from '../../../services/agents';
+import { detectIntentAndRespond, extractSavingsGoal } from '../../../services/agents';
 import { buildBudgetSummary } from '../../analysis/controllers/budget-utils';
 
 export default factories.createCoreController('api::chat.chat', ({ strapi }) => ({
@@ -11,19 +11,25 @@ export default factories.createCoreController('api::chat.chat', ({ strapi }) => 
 
     const { history = [], message } = ctx.request.body || {};
     const summary = await buildBudgetSummary(strapi, user.id);
-    const goals = await strapi.entityService.findMany('api::savings-goal.savings-goal', {
+    const goalsRaw = await strapi.entityService.findMany('api::savings-goal.savings-goal', {
       filters: { user: user.id },
       sort: { targetDate: 'asc' },
     });
+    const goals: any[] = Array.isArray(goalsRaw) ? goalsRaw : goalsRaw ? [goalsRaw] : [];
 
     const result = await detectIntentAndRespond({ history, message, goals, summary }, async (goalText) => {
-      const created = await strapi.controller('api::savings-goal.savings-goal').fromText({
-        ...ctx,
-        request: { body: { text: goalText } },
+      const parsed = await extractSavingsGoal(goalText);
+      const goal = await strapi.entityService.create('api::savings-goal.savings-goal', {
+        data: { ...parsed, user: user.id },
       });
-      return created?.goal ?? null;
+      const updatedGoals = (await strapi.entityService.findMany('api::savings-goal.savings-goal', {
+        filters: { user: user.id },
+        sort: { targetDate: 'asc' },
+      })) as any[];
+      return { goal, goals: updatedGoals };
     });
 
-    ctx.body = { ...result, goals, summary };
+    const goalsToReturn = (result as any).goals ?? goals;
+    ctx.body = { ...result, goals: goalsToReturn, summary };
   },
 }));
